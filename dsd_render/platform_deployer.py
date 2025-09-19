@@ -86,18 +86,42 @@ class PlatformDeployer:
     def _validate_platform(self):
         """Make sure the local environment and project supports deployment to Render.
 
+        Make sure CLI is installed, and user is authenticated. Make sure necessary
+        resources have been created and identified, and that we have the user's
+        permission to use those resources.
+
         Returns:
             None
         Raises:
             DSDCommandError: If we find any reason deployment won't work.
         """
-        pass
+        if dsd_config.unit_testing:
+            # Unit tests don't use the platform's CLI. Use the deployed project name
+            # that was passed to the django-simple-deploy CLI.
+            self.deployed_project_name = dsd_config.deployed_project_name
+            return
 
+        self._validate_cli()
 
     def _prep_automate_all(self):
         """Take any further actions needed if using automate_all."""
         pass
 
+    def _validate_cli(self):
+        """Make sure the Render CLI is installed, and user is authenticated."""
+        cmd = "render --version"
+
+        # This generates a FileNotFoundError on Ubuntu if the CLI is not installed.
+        try:
+            output_obj = plugin_utils.run_quick_command(cmd)
+        except FileNotFoundError:
+            raise DSDCommandError(platform_msgs.cli_not_installed)
+
+        plugin_utils.log_info(output_obj)
+
+        # DEV: Note which OS this block runs on; I believe it's macOS.
+        if output_obj.returncode:
+            raise DSDCommandError(platform_msgs.cli_not_installed)
 
     def _conclude_automate_all(self):
         """Finish automating the push to Render.
