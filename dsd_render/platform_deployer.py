@@ -123,6 +123,26 @@ class PlatformDeployer:
         if output_obj.returncode:
             raise DSDCommandError(platform_msgs.cli_not_installed)
 
+        # Check that user is authenticated.
+        user_email = self._get_cli_logged_in_user_or_error()
+        msg = f"  Logged in to Render CLI as: {user_email}"
+        plugin_utils.write_output(msg)
+
+    def _get_cli_logged_in_user_or_error(self):
+        cmd = "render whoami"
+        output_obj = plugin_utils.run_quick_command(cmd)
+
+        error_msg = "Error: failed to create client: run `render login` to authenticate"
+        if error_msg in output_obj.stderr.decode():
+            raise DSDCommandError(platform_msgs.cli_logged_out)
+
+        # render whoami command does not support json output (as of version 2.2.0)
+        stdout = output_obj.stdout.decode()
+        for line in stdout.split("\n"):
+            if "Email" in line:
+                user_email = line.split(":")[1].strip()
+        return user_email
+
     def _conclude_automate_all(self):
         """Finish automating the push to Render.
 
