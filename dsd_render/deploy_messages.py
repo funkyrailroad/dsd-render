@@ -22,17 +22,27 @@ Okay, cancelling Render configuration and deployment.
 # DEV: This could be moved to deploy_messages, with an arg for platform and URL.
 cli_not_installed = """
 In order to deploy to Render, you need to install the Render CLI.
-  See here: ...
+  See here: https://render.com/docs/cli#1-install
 After installing the CLI, you can run the deploy command again.
 """
 
 cli_logged_out = """
 You are currently logged out of the Render CLI. Please log in,
   and then run the deploy command again.
-You can log in from  the command line:
-  $ ...
+You can log in from the command line:
+  $ render login
 """
 
+render_settings_found = """
+There is already a Render-specific settings block in settings.py. Is it okay to
+overwrite this block, and everything that follows in settings.py?
+"""
+
+cant_overwrite_settings = """
+In order to configure the project for deployment, we need to write a Render-specific
+settings block. Please remove the current Render-specific settings, and then run
+the deploy command again.
+"""
 
 # --- Dynamic strings ---
 # These need to be generated in functions, to display information that's determined as
