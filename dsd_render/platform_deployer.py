@@ -66,6 +66,7 @@ class PlatformDeployer:
 
     def __init__(self):
         self.templates_path = Path(__file__).parent / "templates"
+        self.deployed_project_name = "test project"
 
     # --- Public methods ---
 
@@ -78,6 +79,9 @@ class PlatformDeployer:
 
         # Configure project for deployment to Render
 
+        self._add_render_yaml()
+        self._add_render_entrypoint()
+        self._add_requirements()
         self._conclude_automate_all()
         self._show_success_message()
 
@@ -106,6 +110,42 @@ class PlatformDeployer:
     def _prep_automate_all(self):
         """Take any further actions needed if using automate_all."""
         pass
+
+    def _add_render_entrypoint(self):
+        """Add an entrypoint script for Render."""
+
+        # Build contents of render.yaml
+        template_path = self.templates_path / "render_entrypoint.sh"
+        context = {}
+        contents = plugin_utils.get_template_string(template_path, context)
+
+        # Write file to project.
+        path = dsd_config.project_root / "render_entrypoint.sh"
+        plugin_utils.add_file(path, contents)
+
+    def _add_render_yaml(self):
+        """Add a minimal render.yaml file."""
+
+        # Build contents of render.yaml
+        template_path = self.templates_path / "render.yaml"
+        context = {
+            "deployed_project_name": self.deployed_project_name,
+        }
+        contents = plugin_utils.get_template_string(template_path, context)
+
+        # Write file to project.
+        path = dsd_config.project_root / "render.yaml"
+        plugin_utils.add_file(path, contents)
+
+    def _add_requirements(self):
+        """Add requirements for deploying to Render."""
+        requirements = [
+            "gunicorn",
+            # "psycopg2-binary",
+            # "dj-database-url",
+            # "whitenoise",
+        ]
+        plugin_utils.add_packages(requirements)
 
     def _validate_cli(self):
         """Make sure the Render CLI is installed, and user is authenticated."""
