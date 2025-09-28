@@ -106,6 +106,7 @@ class PlatformDeployer:
             self.deployed_project_name = dsd_config.deployed_project_name
             return
 
+        self._check_settings_render()
         self._validate_cli()
 
     def _prep_automate_all(self):
@@ -195,6 +196,20 @@ class PlatformDeployer:
             if "Email" in line:
                 user_email = line.split(":")[1].strip()
         return user_email
+
+    def _check_settings_render(self):
+        """Check to see if a Render settings file already exists."""
+        start_line = "# Render settings."
+        plugin_utils.check_settings(
+            "Render",
+            start_line,
+            platform_msgs.render_settings_found,
+            platform_msgs.cant_overwrite_settings,
+        )
+        # NOTE: this path can be moved to init
+        path = dsd_config.project_root / "blog/settings_render.py"
+        if path.exists():
+            raise DSDCommandError("Render-specific settings file already exists.")
 
     def _conclude_automate_all(self):
         """Finish automating the push to Render.
