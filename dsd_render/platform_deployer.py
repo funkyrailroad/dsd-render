@@ -81,6 +81,7 @@ class PlatformDeployer:
 
         self._add_render_yaml()
         self._add_render_entrypoint()
+        self._add_settings_render()
         self._add_requirements()
         self._conclude_automate_all()
         self._show_success_message()
@@ -121,6 +122,18 @@ class PlatformDeployer:
 
         # Write file to project.
         path = dsd_config.project_root / "render_entrypoint.sh"
+        plugin_utils.add_file(path, contents)
+
+    def _add_settings_render(self):
+        """Add a Render-specific settings file."""
+
+        # Build contents of render.yaml
+        template_path = self.templates_path / "settings_render.py"
+        context = {}
+        contents = plugin_utils.get_template_string(template_path, context)
+
+        # Write file to project.
+        path = dsd_config.project_root / "blog/settings_render.py"
         plugin_utils.add_file(path, contents)
 
     def _add_render_yaml(self):
