@@ -67,6 +67,8 @@ class PlatformDeployer:
     def __init__(self):
         self.templates_path = Path(__file__).parent / "templates"
         self.deployed_project_name = "test project"
+        self.django_project_name = dsd_config.local_project_name
+        self.settings_render_path = dsd_config.project_root / self.django_project_name / "settings_render.py"
 
     # --- Public methods ---
 
@@ -119,7 +121,7 @@ class PlatformDeployer:
         # Build contents of render.yaml
         template_path = self.templates_path / "render_entrypoint.sh"
         context = {
-            "django_project_name": dsd_config.local_project_name,
+            "django_project_name": self.django_project_name
         }
         contents = plugin_utils.get_template_string(template_path, context)
 
@@ -136,8 +138,7 @@ class PlatformDeployer:
         contents = plugin_utils.get_template_string(template_path, context)
 
         # Write file to project.
-        path = dsd_config.project_root / dsd_config.local_project_name / "settings_render.py"
-        plugin_utils.add_file(path, contents)
+        plugin_utils.add_file(self.settings_render_path, contents)
 
     def _add_render_yaml(self):
         """Add a minimal render.yaml file."""
@@ -209,8 +210,7 @@ class PlatformDeployer:
             platform_msgs.cant_overwrite_settings,
         )
         # NOTE: this path can be moved to init
-        path = dsd_config.project_root / dsd_config.local_project_name / "settings_render.py"
-        if path.exists():
+        if self.settings_render_path.exists():
             raise DSDCommandError("Render-specific settings file already exists.")
 
     def _conclude_automate_all(self):
