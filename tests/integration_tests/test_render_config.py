@@ -23,16 +23,23 @@ from tests.integration_tests.conftest import (
 
 
 def test_settings(tmp_project):
-    """Verify there's a Render-specific settings section.
+    """Verify that settings.py is split into settings.py and settings_render.py.
     This function only checks the entire settings file. It does not examine
       individual settings.
-
-    Note: This will fail as soon as you make updates to the user's settings file.
-    That's good! Look in the test's temp dir, look at the settings file after it was
-    modified, and if it's correct, copy that file to reference_files. Tests should pass
-    again.
     """
-    hf.check_reference_file(tmp_project, "blog/settings.py", "dsd-render")
+    hf.check_reference_file(
+        tmp_project,
+        "blog/settings.py",
+        "dsd-render",
+        reference_filename="settings.py",
+    )
+
+    hf.check_reference_file(
+        tmp_project,
+        "blog/settings_render.py",
+        "dsd-render",
+        reference_filename="settings_render.py",
+    )
 
 
 def test_requirements_txt(tmp_project, pkg_manager, tmp_path, dsd_version):
