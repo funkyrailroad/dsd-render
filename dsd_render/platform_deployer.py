@@ -118,7 +118,9 @@ class PlatformDeployer:
 
         # Build contents of render.yaml
         template_path = self.templates_path / "render_entrypoint.sh"
-        context = {}
+        context = {
+            "django_project_name": dsd_config.local_project_name,
+        }
         contents = plugin_utils.get_template_string(template_path, context)
 
         # Write file to project.
@@ -134,7 +136,7 @@ class PlatformDeployer:
         contents = plugin_utils.get_template_string(template_path, context)
 
         # Write file to project.
-        path = dsd_config.project_root / "blog/settings_render.py"
+        path = dsd_config.project_root / dsd_config.local_project_name / "settings_render.py"
         plugin_utils.add_file(path, contents)
 
     def _add_render_yaml(self):
@@ -207,7 +209,7 @@ class PlatformDeployer:
             platform_msgs.cant_overwrite_settings,
         )
         # NOTE: this path can be moved to init
-        path = dsd_config.project_root / "blog/settings_render.py"
+        path = dsd_config.project_root / dsd_config.local_project_name / "settings_render.py"
         if path.exists():
             raise DSDCommandError("Render-specific settings file already exists.")
 
