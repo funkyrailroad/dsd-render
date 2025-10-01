@@ -30,6 +30,8 @@ git commit -m "Initial commit"
 
 - Install the [Render CLI](https://render.com/docs/cli).
 
+- [Create a Render API key](https://render.com/docs/api#1-create-an-api-key)
+
 
 ## Configuration-only deployment
 

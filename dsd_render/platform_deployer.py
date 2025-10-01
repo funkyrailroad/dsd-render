@@ -110,6 +110,7 @@ class PlatformDeployer:
 
         self._check_settings_render()
         self._validate_cli()
+        self._validate_render_api_key_env_var()
 
     def _prep_automate_all(self):
         """Take any further actions needed if using automate_all."""
@@ -163,6 +164,13 @@ class PlatformDeployer:
             # "whitenoise",
         ]
         plugin_utils.add_packages(requirements)
+
+    def _validate_render_api_key_env_var(self):
+        # NOTE: this path can be moved to init
+        try:
+            os.environ["RENDER_API_KEY"]
+        except KeyError:
+            raise DSDCommandError("RENDER_API_KEY must be defined.")
 
     def _validate_cli(self):
         """Make sure the Render CLI is installed, and user is authenticated."""
