@@ -112,6 +112,9 @@ class PlatformDeployer:
         self._validate_cli()
         self._validate_render_api_key_env_var()
 
+        # Create the db now, before any additional configuration.
+        self._create_db()
+
     def _prep_automate_all(self):
         """Take any further actions needed if using automate_all."""
         pass
@@ -207,6 +210,20 @@ class PlatformDeployer:
             if "Email" in line:
                 user_email = line.split(":")[1].strip()
         return user_email
+
+    def _create_db(self):
+        from . import render_api_wrapper as raw
+        workspace_id = raw.get_default_workspace_id()
+
+        db_name = self.deployed_project_name + "-db"
+        try:
+            postgres = raw.get_postgres_by_name(db_name)
+            plugin_utils.write_output("Using existing database")
+        except ValueError:
+            postgres = raw.create_postgres(name=db_name,
+                                owner_workspace_id=workspace_id,)
+            plugin_utils.write_output("Creating new database")
+        return postgres
 
     def _check_settings_render(self):
         """Check to see if a Render settings file already exists."""
