@@ -162,8 +162,8 @@ class PlatformDeployer:
         """Add requirements for deploying to Render."""
         requirements = [
             "gunicorn",
-            # "psycopg2-binary",
-            # "dj-database-url",
+            "psycopg2-binary",
+            "dj-database-url",
             # "whitenoise",
         ]
         plugin_utils.add_packages(requirements)
