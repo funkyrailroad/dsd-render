@@ -67,7 +67,7 @@ $ git commit -m "Configured for deployment to Render."
 $ git push
 ```
 
-Create a Blueprint in Render and give it a name
+Create a Blueprint in Render, give it a name and deploy it.
   - https://dashboard.render.com/select-repo?type=blueprint
 
 
