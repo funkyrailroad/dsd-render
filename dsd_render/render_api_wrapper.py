@@ -23,10 +23,6 @@ def create_postgres(name, owner_workspace_id):
 
     response = requests.post(url, json=payload, headers=headers)
     data = response.json()
-    postgres_id = data["id"]
-    user = data["databaseUser"]
-    name = data["databaseName"]
-    dashboard_url = data["dashboardUrl"]
     return data
 
 

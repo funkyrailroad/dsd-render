@@ -43,12 +43,8 @@ Add a set of requirements:
         plugin_utils.add_packages(requirements)
 """
 
-import sys, os, re, json
+import os
 from pathlib import Path
-
-from django.utils.safestring import mark_safe
-
-import requests
 
 from . import deploy_messages as platform_msgs
 
