@@ -17,7 +17,7 @@ def create_postgres(name, owner_workspace_id):
         "name": name,
         "ownerId": owner_workspace_id,
         "plan": "free",
-        "region": "ohio",
+        # "region": "ohio",  # use default region
         "version": "16",
     }
 
