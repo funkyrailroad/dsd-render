@@ -1,0 +1,3 @@
+DJANGO_SETTINGS_MODULE=blog.settings_render python manage.py makemigrations
+DJANGO_SETTINGS_MODULE=blog.settings_render python manage.py migrate
+DJANGO_SETTINGS_MODULE=blog.settings_render gunicorn blog.wsgi:application

@@ -94,6 +94,22 @@ def test_gitignore(tmp_project):
 
 # --- Test Render-specific files ---
 
+def test_creates_render_entrypoint(tmp_project):
+    """Verify that render_entrypoint.sh is created correctly."""
+    hf.check_reference_file(
+        tmp_project,
+        "render_entrypoint.sh",
+        "dsd-render",
+    )
+
+def test_creates_render_yaml(tmp_project):
+    """Verify that render.yaml is created correctly."""
+    hf.check_reference_file(
+        tmp_project,
+        "render.yaml",
+        "dsd-render",
+    )
+
 # Example test for a platform-specicific file such as Fly's Dockerfile
 # def test_creates_dockerfile(tmp_project, pkg_manager):
 #     """Verify that dockerfile is created correctly."""
