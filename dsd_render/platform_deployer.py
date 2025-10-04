@@ -66,8 +66,8 @@ class PlatformDeployer:
 
     def __init__(self):
         self.templates_path = Path(__file__).parent / "templates"
-        self.deployed_project_name = "test project"
         self.django_project_name = dsd_config.local_project_name
+        self.render_service_name = dsd_config.local_project_name
         self.settings_render_path = dsd_config.project_root / self.django_project_name / "settings_render.py"
 
     # --- Public methods ---
@@ -150,7 +150,7 @@ class PlatformDeployer:
         # Build contents of render.yaml
         template_path = self.templates_path / "render.yaml"
         context = {
-            "deployed_project_name": self.deployed_project_name,
+            "render_service_name": self.render_service_name,
         }
         contents = plugin_utils.get_template_string(template_path, context)
 
@@ -215,7 +215,7 @@ class PlatformDeployer:
         from . import render_api_wrapper as raw
         workspace_id = raw.get_default_workspace_id()
 
-        db_name = self.deployed_project_name + "-db"
+        db_name = self.render_service_name + "-db"
         try:
             postgres = raw.get_postgres_by_name(db_name)
             plugin_utils.write_output("Using existing database")

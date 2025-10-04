@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: "{{ deployed_project_name }}"
+    name: "{{ render_service_name }}"
     env: python
     buildCommand: pip install -r requirements.txt
     startCommand: bash render_entrypoint.sh
