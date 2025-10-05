@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: "{{ render_service_name }}"
+    name: "blog"
     env: python
     buildCommand: pip install -r requirements.txt
     startCommand: bash render_entrypoint.sh

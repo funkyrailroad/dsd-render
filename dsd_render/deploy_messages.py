@@ -64,14 +64,14 @@ def success_msg(log_output=""):
             $ git status
             $ git add .
             $ git commit -am "Configured project for deployment."
-        - Push your project to Render's servers:
-            $ ...
-        - Open your project:
-            $ ...    
+        - Push your project to your remote (GitHub/GitLab/Bitbucket/etc.):
+            $ git push
+        - Create a Blueprint in Render, give it a name and deploy it.
+            -  https://dashboard.render.com/select-repo?type=blueprint
         - As you develop your project further:
             - Make local changes
             - Commit your local changes
-            - Run `...` again to push your changes.
+            - Run `git push` again to push your changes.
     """
     )
 

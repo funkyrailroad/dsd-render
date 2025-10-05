@@ -30,6 +30,8 @@ git commit -m "Initial commit"
 
 - Install the [Render CLI](https://render.com/docs/cli).
 
+- [Create a Render API key](https://render.com/docs/api#1-create-an-api-key)
+
 
 ## Configuration-only deployment
 
@@ -65,33 +67,28 @@ $ git commit -m "Configured for deployment to Render."
 $ git push
 ```
 
-Create a Blueprint in Render and give it a name
+Create a Blueprint in Render, give it a name and deploy it.
   - https://dashboard.render.com/select-repo?type=blueprint
-  - NOTE: this could potentially be done optionally via an API request
-    directly to Render
-  - NOTE: configure project name in blueprint via a CLI arg
 
 
-Once the project has finished deploying, it will be given a URL e.g.
-`test-project-5wig.onrender.com`. Add this to the `ALLOWED_HOSTS` list in your
-project's `settings.py` file.
+Go to the postgres instance's dashboard to get the internal connection url.
+Use this value to define the `DATABASE_URL` environment variable for the
+created service. Save and deploy the changes.
 
-```
-# Make changes to settings.py
-```
-
-Commit these changes and push them up to your remote.
-
-```
-git add .
-git commit -m 'Add to ALLOWED_HOSTS.'
-git push
-```
 
 The project is configured to automatically redploy for each push to the
 remote. Your updates should be available momentarily.
-  - ! NOTE: automatically deployments can be disabled, and the CLI can be used
+  - NOTE: automatically deployments can be disabled, and the CLI can be used
     to trigger deployments manually.
 
 You can find a record of the deployment process in `dsd_logs/`. It contains
 most of the output you saw when running `deploy`.
+
+
+Deleting a project from Render
+---
+
+If you want to delete what you've just deployed to Render, you can do so in
+the dashboard. You must "disconnect" the blueprint and delete both the web
+and Postgres services. Go to each dashboard individually, choose settings and
+scroll to the bottom of each.

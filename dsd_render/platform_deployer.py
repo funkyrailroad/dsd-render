@@ -43,12 +43,10 @@ Add a set of requirements:
         plugin_utils.add_packages(requirements)
 """
 
-import sys, os, re, json
+import os
 from pathlib import Path
 
-from django.utils.safestring import mark_safe
-
-import requests
+from textwrap import dedent
 
 from . import deploy_messages as platform_msgs
 
@@ -66,8 +64,8 @@ class PlatformDeployer:
 
     def __init__(self):
         self.templates_path = Path(__file__).parent / "templates"
-        self.deployed_project_name = "test project"
         self.django_project_name = dsd_config.local_project_name
+        self.render_service_name = dsd_config.local_project_name
         self.settings_render_path = dsd_config.project_root / self.django_project_name / "settings_render.py"
 
     # --- Public methods ---
@@ -110,6 +108,10 @@ class PlatformDeployer:
 
         self._check_settings_render()
         self._validate_cli()
+        self._validate_render_api_key_env_var()
+
+        # Create the db now, before any additional configuration.
+        self._create_db()
 
     def _prep_automate_all(self):
         """Take any further actions needed if using automate_all."""
@@ -146,7 +148,7 @@ class PlatformDeployer:
         # Build contents of render.yaml
         template_path = self.templates_path / "render.yaml"
         context = {
-            "deployed_project_name": self.deployed_project_name,
+            "render_service_name": self.render_service_name,
         }
         contents = plugin_utils.get_template_string(template_path, context)
 
@@ -158,11 +160,18 @@ class PlatformDeployer:
         """Add requirements for deploying to Render."""
         requirements = [
             "gunicorn",
-            # "psycopg2-binary",
-            # "dj-database-url",
+            "psycopg2-binary",
+            "dj-database-url",
             # "whitenoise",
         ]
         plugin_utils.add_packages(requirements)
+
+    def _validate_render_api_key_env_var(self):
+        # NOTE: this path can be moved to init
+        try:
+            os.environ["RENDER_API_KEY"]
+        except KeyError:
+            raise DSDCommandError("RENDER_API_KEY must be defined.")
 
     def _validate_cli(self):
         """Make sure the Render CLI is installed, and user is authenticated."""
@@ -199,6 +208,21 @@ class PlatformDeployer:
             if "Email" in line:
                 user_email = line.split(":")[1].strip()
         return user_email
+
+    def _create_db(self):
+        from . import render_api_wrapper as raw
+        workspace_id = raw.get_default_workspace_id()
+
+        db_name = self.render_service_name + "-db"
+        try:
+            postgres = raw.get_postgres_by_name(db_name)
+            plugin_utils.write_output("Using existing database")
+        except raw.PostgresNotFoundError:
+            postgres = raw.create_postgres(name=db_name,
+                                owner_workspace_id=workspace_id,)
+            plugin_utils.write_output("Creating new database")
+        self.postgres_dashboard_url = postgres["dashboardUrl"]
+        return postgres
 
     def _check_settings_render(self):
         """Check to see if a Render settings file already exists."""
@@ -241,3 +265,11 @@ class PlatformDeployer:
         else:
             msg = platform_msgs.success_msg(log_output=dsd_config.log_output)
         plugin_utils.write_output(msg)
+
+        db_msg = dedent(
+            f"""
+            Retrieve your database's internal connection url in the dashboard here:
+                - {self.postgres_dashboard_url}
+            """
+            )
+        plugin_utils.write_output(db_msg)
