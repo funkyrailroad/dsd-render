@@ -86,3 +86,12 @@ remote. Your updates should be available momentarily.
 
 You can find a record of the deployment process in `dsd_logs/`. It contains
 most of the output you saw when running `deploy`.
+
+
+Deleting a project from Render
+---
+
+If you want to delete what you've just deployed to Render, you can do so in
+the dashboard. You must "disconnect" the blueprint and delete both the web
+and Postgres services. Go to each dashboard individually, choose settings and
+scroll to the bottom of each.
