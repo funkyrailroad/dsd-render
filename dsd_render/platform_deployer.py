@@ -215,7 +215,7 @@ class PlatformDeployer:
         try:
             postgres = raw.get_postgres_by_name(db_name)
             plugin_utils.write_output("Using existing database")
-        except ValueError:
+        except raw.PostgresNotFoundError:
             postgres = raw.create_postgres(name=db_name,
                                 owner_workspace_id=workspace_id,)
             plugin_utils.write_output("Creating new database")

@@ -8,6 +8,10 @@ headers = {
 }
 
 
+class PostgresNotFoundError(Exception):
+    pass
+
+
 def create_postgres(name, owner_workspace_id):
     url = "https://api.render.com/v1/postgres"
     payload = {
@@ -69,7 +73,7 @@ def get_postgres_by_name(name):
         postgres = instance["postgres"]
         if postgres["name"] == name:
             return postgres
-    raise ValueError(f"No Postgres instance found with name: {name}")
+    raise PostgresNotFoundError(f"No Postgres instance found with name: {name}")
 
 
 def get_postgres_id_by_name(name):
