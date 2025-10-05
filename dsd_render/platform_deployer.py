@@ -46,6 +46,8 @@ Add a set of requirements:
 import os
 from pathlib import Path
 
+from textwrap import dedent
+
 from . import deploy_messages as platform_msgs
 
 from django_simple_deploy.management.commands.utils import plugin_utils
@@ -219,6 +221,7 @@ class PlatformDeployer:
             postgres = raw.create_postgres(name=db_name,
                                 owner_workspace_id=workspace_id,)
             plugin_utils.write_output("Creating new database")
+        self.postgres_dashboard_url = postgres["dashboardUrl"]
         return postgres
 
     def _check_settings_render(self):
@@ -262,3 +265,11 @@ class PlatformDeployer:
         else:
             msg = platform_msgs.success_msg(log_output=dsd_config.log_output)
         plugin_utils.write_output(msg)
+
+        db_msg = dedent(
+            f"""
+            Retrieve your database's internal connection url in the dashboard here:
+                - {self.postgres_dashboard_url}
+            """
+            )
+        plugin_utils.write_output(db_msg)

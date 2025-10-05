@@ -73,10 +73,7 @@ Create a Blueprint in Render, give it a name and deploy it.
 
 Go to the postgres instance's dashboard to get the internal connection url.
 Use this value to define the `DATABASE_URL` environment variable for the
-created service.
-
-- TODO: output the service dashboard url in deploy logs
-- TODO: output the db-service dashboard url in deploy logs
+created service. Save and deploy the changes.
 
 
 The project is configured to automatically redploy for each push to the
